@@ -1,15 +1,27 @@
-import '../node_modules/bootstrap/dist/css/bootstrap.css'
-import './style.css'
-import '../node_modules/bootstrap/dist/js/bootstrap.js'
-import '../node_modules/jquery/dist/jquery.js'
 //I started by copy and pasting my CSS file content over their default one, and left the import as is.
 //bootstrap.bundle.js came up with an error, so I switched to using just bootstrap.js as that one was fine.
 //I had to use npm install to get the types for jquery as importing it from the node modules wasn't enough.
 //When I first loaded the page some of my colors didn't load as I had put the bootstrap CSS below my custom CSS.
 //I switched the order of importing them and that fixed it.
-const baseURL = 'http://localhost:3000'
 
+import '../node_modules/bootstrap/dist/css/bootstrap.css'
+import './style.css'
+import '../node_modules/bootstrap/dist/js/bootstrap.js'
+import '../node_modules/jquery/dist/jquery.js'
+//Because the imported functions weren't being actively called but were instead including the click events,
+//I had to adjust the way my code was written so that the click events were happening here instead.
+//That way I could import the functions back to here.
+import { addCommission } from './add-commission.js'
+import { deleteCommission, toggleCommission } from './modify-commission.js'
 
+//Once I had everything converted, I tested the app and it worked exactly as it did last week
+//while all of the code was in the same file.
+//My main concern with splitting them is that the baseURL and render will be required in all of them.
+//Most likely I will need to export them to the other files as well, but I will test as I go along.
+
+export const baseURL = 'http://localhost:3000'
+
+//I decided to leave fetchCommissions and render in the main file, with the other functions being split off.
 const fetchCommissions = async () => {
 
     const response = await fetch(`${baseURL}/commissions`)
@@ -27,7 +39,9 @@ type commission = {
   taken: boolean
 }
 
-const render = async () => {
+//The render is a little slow at the start at times in the live server.
+//I noticed this last week as well. However, once it empties the board it is basically instant.
+export const render = async () => {
 
     const commissions = await fetchCommissions()
 
@@ -59,57 +73,10 @@ const render = async () => {
 
 render()
 
+$('#add-commission').on('click', addCommission)
 
-$('#add-commission').on('click', async () => {
+//After my changes .on is showing as deprecated here; however, both functions still work as intended.
+//I can't find an answer on why it would show as deprecated, so perhaps it's a bug that's mismarking it.
+$(document).on("click", ".deleteCommission", deleteCommission)
 
-    if ($('#title').val() == '') {
-        return alert('Please enter a title for your commission!')
-    } else if ($('#description').val() == '') {
-        return alert('Please give a short description of your commission!')
-    } else {
-        const newCommission = { title: $('#title').val(), risk: $('#risk-rating').val(), description: $('#description').val(), taken: false}
-        const response = await fetch(`${baseURL}/commissions`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newCommission)
-        })
-        await response.json()
-        render()
-        $('#title').val('')
-        $('#risk-rating').val(1)
-        $('#description').val('')
-    }
-})
-
-
-$(document).on("click", ".deleteCommission", async function () {
-    await fetch(`${baseURL}/commissions/${$(this).data("index")}`, {
-        method: "DELETE",
-    })
-    render()
-})
-
-$(document).on("click", ".toggleCommission", async function () {
-
-    const id = $(this).data("index")
-    const commission = await fetchCommission(id)
-    
-    await fetch(`${baseURL}/commissions/${id}`, {
-        method: "PUT",
-        headers:  { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...commission, taken: !commission.taken }),
-    })
-
-    render()
-})
-
-//This was my only type error outside of the commission parameter.
-//As in my custom type, I labelled id as a string.
-const fetchCommission = async (id: string) => {
-
-    const response = await fetch(`${baseURL}/commissions/${id}`)
-
-    const data = await response.json()
-
-    return data
-}
+$(document).on("click", ".toggleCommission", toggleCommission)
