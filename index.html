@@ -4,10 +4,60 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <title>Commissions: TS Version</title>
   </head>
   <body>
-    <div id="app"></div>
+    <h1>Commissions</h1>
+
+    <form class="mx-1">
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <label for="title">Commission Title</label>
+                <input type="text" id="title" class="form-control" placeholder="Title">
+            </div>
+            <div class="col-md-4">
+                <label for="risk-rating">Risk Rating</label>
+                <select class="form-control" id="risk-rating">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <label for="description">Describe your commission.</label>
+                <textarea class="form-control" id="description"></textarea>
+            </div>
+            <div class="col-md-4">
+                <button type="button" id="add-commission" class="btn btn-success mt-4">Add Commission</button>
+            </div>
+        </div>
+    </form>
+
+    <div id="commission-board" class="container row row-cols-1 row-cols-md-3 g-2 mx-auto justify-content-center">
+        <!-- <div class="col">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h3>Shadow Monster</h3>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Risk Rating: <strong>5</strong></h4>
+                    <p class="card-text">took over the town well and nobody can get close</p>
+                    <div class="row">
+                        <button type="button" class="btn btn-success toggle-commission col-auto mx-auto">Available</button>
+                        <button type="button" class="btn btn-danger delete-commission col-auto mx-auto">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+    </div>
+
+
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
